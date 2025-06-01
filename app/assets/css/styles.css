@@ -636,6 +636,23 @@ body {
     transform: translateY(-5px);
 }
 
+.red-social-card .social-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+/* Estilos específicos para cada icono */
+.red-social-card .social-icon[alt="YouTube"],
+.red-social-card .social-icon[alt="Instagram"] {
+    filter: none; /* Mantiene los colores originales */
+}
+
+.red-social-card:hover .social-icon {
+    transform: scale(1.1);
+}
+
 .red-social-card i {
     font-size: 2.5rem;
     margin-bottom: 15px;
@@ -647,6 +664,10 @@ body {
 
 .red-social-card p {
     color: var(--text-secondary);
+}
+
+[data-theme="dark"] .red-social-card .social-icon[alt="X"] {
+    filter: invert(1); /* Solo invertir el color para X en modo oscuro */
 }
 
 /* Estilos para Donaciones */
@@ -662,6 +683,7 @@ body {
     justify-content: center;
     gap: 30px;
     margin-top: 30px;
+    flex-wrap: wrap;
 }
 
 .metodo-donacion {
@@ -669,12 +691,23 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 200px;
 }
 
 .metodo-donacion img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 15px;
+    width: 250px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 20px;
+}
+
+/* Estilos específicos para PayPal */
+.metodo-donacion img[alt="PayPal"] {
+    width: 300px;
+    height: 70px;
 }
 
 .btn-donar {
@@ -685,6 +718,18 @@ body {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%;
+    max-width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-donar img {
+    width: 24px;
+    height: 24px;
+    margin: 0;
 }
 
 .btn-donar:hover {
@@ -860,8 +905,8 @@ body {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background-color: var(--card-bg);
     display: flex;
@@ -871,31 +916,31 @@ body {
     text-decoration: none;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    z-index: 1000;
+    z-index: 1001;
+    border: 2px solid var(--border-color);
 }
 
 .btn-back:hover {
     transform: translateX(-5px);
     background-color: var(--hover-bg);
-}
-
-.btn-back i {
-    font-size: 1.2rem;
+    border-color: var(--primary-color);
 }
 
 .btn-back img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     filter: var(--icon-filter);
 }
 
 [data-theme="dark"] .btn-back {
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    border-color: var(--border-color);
 }
 
 [data-theme="dark"] .btn-back:hover {
     background-color: var(--hover-bg);
+    border-color: var(--text-primary);
 }
 
 [data-theme="dark"] .btn-back img {

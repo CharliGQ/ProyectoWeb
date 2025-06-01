@@ -1,6 +1,11 @@
 <?php
-
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'proyectocreadorcontenido');
-define('DB_USER', 'root');
-define('DB_PASS', ''); 
+	class  Db{
+		private static $conexion=NULL;
+		private function __construct (){}
+		public static function conectar(){
+			$pdo_options[PDO::ATTR_ERRMODE]=PDO::ERRMODE_EXCEPTION;
+			self::$conexion= new PDO('mysql:host=localhost;dbname=proyectocreadorcontenido','root','',$pdo_options);
+			return self::$conexion;
+		}
+	}
+?>
