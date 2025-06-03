@@ -34,11 +34,14 @@ class LoginController {
                     case 'moderador':
                         header('Location: ../views/dashboard/moderador.php');
                         break;
+                    case 'creador':
+                        header('Location: ../views/dashboard/creador.php');
+                        break;
                     case 'main_owner':
                         header('Location: ../views/dashboard/admin.php');
                         break;
                     default:
-                        header('Location: ../views/dashboard/registrado.php');
+                        header('Location: ../views/dashboard/login.php');
                 }
                 exit();
             } else {

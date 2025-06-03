@@ -385,23 +385,26 @@ body {
 .auth-footer {
     text-align: center;
     margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.auth-footer p {
     color: var(--text-secondary);
-    font-size: 0.9rem;
 }
 
 .auth-footer a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .auth-footer a:hover {
-    text-decoration: underline;
+    color: var(--primary-hover);
+}
+
+[data-theme="dark"] .auth-footer a {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .auth-footer a:hover {
+    color: var(--gray-300);
 }
 
 .auth-error {

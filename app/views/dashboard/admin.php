@@ -13,7 +13,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner'
     <title>Dashboard - Administrador</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../assets/css/theme-toggle.css">
 </head>
 <body>
     <div class="dashboard-container">
