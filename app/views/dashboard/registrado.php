@@ -4,7 +4,25 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
     header('Location: ../login.php');
     exit();
 }
+
+require_once '../../config/database.php';
+
+$conn = Db::conectar();
+$id_usuario = $_SESSION['usuario']['id'];
+
+// Obtener cantidad de comentarios del usuario
+$stmtComentarios = $conn->prepare("SELECT COUNT(*) AS total_comentarios FROM comentarios_video WHERE id_usuario = :id_usuario");
+$stmtComentarios->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+$stmtComentarios->execute();
+$totalComentarios = $stmtComentarios->fetch(PDO::FETCH_ASSOC)['total_comentarios'];
+
+// Obtener cantidad total de likes recibidos en sus comentarios
+$stmtLikes = $conn->prepare("SELECT SUM(votos) AS total_likes FROM comentarios_video WHERE id_usuario = :id_usuario");
+$stmtLikes->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+$stmtLikes->execute();
+$totalLikes = $stmtLikes->fetch(PDO::FETCH_ASSOC)['total_likes'] ?: 0; // Si no hay likes, mostrar 0
 ?>
+
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -23,12 +41,13 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
                 <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']['nombre']); ?></p>
             </div>
             <ul class="nav-menu">
-                <li><a href="#" class="active">Inicio</a></li>
-                <li><a href="#">Mi Perfil</a></li>
-                <li><a href="#">Mis Publicaciones</a></li>
-                <li><a href="#">Mensajes</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
-            </ul>
+    <li><a href="#" class="active">Inicio</a></li>
+    <li><a href="#">Mi Perfil</a></li>
+    <li><a href="ver_videos.php">Ver Vídeos</a></li>
+    <li><a href="ver_tienda.php">Ver Tienda</a></li>
+    <li><a href="#">Mensajes</a></li>
+    <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+</ul>
         </nav>
         
         <main class="dashboard-main">
@@ -48,22 +67,19 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
                 </div>
                 
                 <div class="dashboard-card">
-                    <h3>Estadísticas</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-value">0</span>
-                            <span class="stat-label">Publicaciones</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">0</span>
-                            <span class="stat-label">Comentarios</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">0</span>
-                            <span class="stat-label">Likes</span>
-                        </div>
-                    </div>
-                </div>
+    <h3>Estadísticas</h3>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <span class="stat-value"><?= htmlspecialchars($totalComentarios) ?></span>
+            <span class="stat-label">Comentarios</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value"><?= htmlspecialchars($totalLikes) ?></span>
+            <span class="stat-label">Likes Recibidos</span>
+        </div>
+    </div>
+</div>
+
             </div>
         </main>
     </div>

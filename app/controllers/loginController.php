@@ -41,7 +41,7 @@ class LoginController {
                         header('Location: ../views/dashboard/admin.php');
                         break;
                     default:
-                        header('Location: ../views/dashboard/login.php');
+                        header('Location: ../views/login.php');
                 }
                 exit();
             } else {
@@ -55,12 +55,35 @@ class LoginController {
 
     public function logout() {
         session_start();
-        session_destroy();
+        session_unset();     // Elimina variables de sesión
+        session_destroy();   // Destruye la sesión
+
         header('Location: ../views/login.php');
         exit();
     }
 }
 
+// Determinar acción desde GET
+if (isset($_GET['action'])) {
+    $accion = $_GET['action'];
+} elseif (isset($_POST['action'])) {
+    $accion = $_POST['action'];
+} else {
+    $accion = 'login';
+}
+
+// Iniciar controlador
 $loginController = new LoginController();
-$loginController->login();
-?> 
+
+switch ($accion) {
+    case 'login':
+        $loginController->login();
+        break;
+    case 'logout':
+        $loginController->logout();
+        break;
+    default:
+        header('Location: ../views/login.php');
+        exit();
+}
+?>

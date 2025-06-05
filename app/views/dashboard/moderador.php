@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'moderador')
                 <li><a href="#">Reportes</a></li>
                 <li><a href="#">Usuarios</a></li>
                 <li><a href="#">Configuración</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
             </ul>
         </nav>
         
