@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner'
                 <li><a href="#">Configuración del Sistema</a></li>
                 <li><a href="#">Logs del Sistema</a></li>
                 <li><a href="#">Backup</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
             </ul>
         </nav>
         

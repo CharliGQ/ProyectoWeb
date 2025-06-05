@@ -4,7 +4,47 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'moderador')
     header('Location: ../login.php');
     exit();
 }
+
+require_once '../../config/database.php';
+
+$conn = Db::conectar();
+
+$limit = 5; // Número de reportes por página
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($page - 1) * $limit;
+
+$stmtReportes = $conn->prepare(
+    "SELECT r.id_reporte, r.id_comentario, r.id_reportante, r.motivo, r.fecha_reporte, r.estado, r.tipo_reporte, r.id_video, 
+            u.nombre_usuario AS reportante, c.comentario
+     FROM reportes_comentarios r
+     JOIN usuarios u ON r.id_reportante = u.id_usuario
+     JOIN comentarios_video c ON r.id_comentario = c.id_comentario
+     WHERE r.estado = 'pendiente'
+     ORDER BY r.fecha_reporte DESC
+     LIMIT :limit OFFSET :offset"
+);
+$stmtReportes->bindParam(':limit', $limit, PDO::PARAM_INT);
+$stmtReportes->bindParam(':offset', $offset, PDO::PARAM_INT);
+$stmtReportes->execute();
+$reportes = $stmtReportes->fetchAll(PDO::FETCH_ASSOC);
+
+// Obtener cantidad de reportes atendidos
+$stmtAtendidos = $conn->prepare("SELECT COUNT(*) AS total_atendidos FROM reportes_comentarios WHERE estado = 'revisado'");
+$stmtAtendidos->execute();
+$totalAtendidos = $stmtAtendidos->fetch(PDO::FETCH_ASSOC)['total_atendidos'];
+
+// Obtener cantidad de usuarios sancionados (si hay sanción por reporte)
+$stmtSancionados = $conn->prepare("SELECT COUNT(*) AS total_sancionados FROM usuarios WHERE sancionado = 1");
+$stmtSancionados->execute();
+$totalSancionados = $stmtSancionados->fetch(PDO::FETCH_ASSOC)['total_sancionados'];
+
+// Obtener cantidad de comentarios eliminados
+$stmtEliminados = $conn->prepare("SELECT COUNT(*) AS total_eliminados FROM reportes_comentarios WHERE estado = 'descartado'");
+$stmtEliminados->execute();
+$totalEliminados = $stmtEliminados->fetch(PDO::FETCH_ASSOC)['total_eliminados'];
+
 ?>
+
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -28,7 +68,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'moderador')
                 <li><a href="#">Reportes</a></li>
                 <li><a href="#">Usuarios</a></li>
                 <li><a href="#">Configuración</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
             </ul>
         </nav>
         
@@ -41,30 +81,71 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'moderador')
             </div>
             
             <div class="dashboard-content">
-                <div class="dashboard-card">
-                    <h3>Reportes Pendientes</h3>
-                    <div class="reports-list">
-                        <p>No hay reportes pendientes</p>
-                    </div>
-                </div>
-                
-                <div class="dashboard-card">
-                    <h3>Actividad de Moderación</h3>
-                    <div class="moderation-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">0</span>
-                            <span class="stat-label">Reportes Atendidos</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">0</span>
-                            <span class="stat-label">Usuarios Sancionados</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">0</span>
-                            <span class="stat-label">Contenido Eliminado</span>
-                        </div>
-                    </div>
-                </div>
+    <!-- Sección de Reportes Pendientes -->
+    <div class="dashboard-card full-width">
+        <h3>Reportes Pendientes</h3>
+        <div class="reports-list">
+            <?php if (count($reportes) > 0): ?>
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>Reportante</th>
+                            <th>Comentario</th>
+                            <th>Motivo</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($reportes as $reporte): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($reporte['reportante']) ?></td>
+                                <td><?= htmlspecialchars($reporte['comentario']) ?></td>
+                                <td><?= htmlspecialchars($reporte['motivo']) ?></td>
+                                <td><?= htmlspecialchars($reporte['tipo_reporte']) ?></td>
+                                <td><?= htmlspecialchars($reporte['fecha_reporte']) ?></td>
+                                <td><?= htmlspecialchars($reporte['estado']) ?></td>
+                                <td>
+                                    <button class="btn-action" onclick="resolverReporte(<?= $reporte['id_reporte'] ?>, 'revisado')">✅ Revisado</button>
+                                    <button class="btn-action btn-danger" onclick="resolverReporte(<?= $reporte['id_reporte'] ?>, 'descartado')">❌ Eliminar</button>
+                                </td>
+                                <td>
+    <button class="btn-action btn-warning" onclick="sancionarUsuario(<?= $reporte['id_reportante'] ?>)">🚫 Sancionar Usuario</button>
+</td>
+
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>No hay reportes pendientes.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Sección de Actividad de Moderación -->
+    <div class="dashboard-card full-width">
+    <h3>Actividad de Moderación</h3>
+    <div class="moderation-stats">
+        <div class="stat-item">
+            <span class="stat-value"><?= htmlspecialchars($totalAtendidos) ?></span>
+            <span class="stat-label">Reportes Atendidos</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value"><?= htmlspecialchars($totalSancionados) ?></span>
+            <span class="stat-label">Usuarios Sancionados</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value"><?= htmlspecialchars($totalEliminados) ?></span>
+            <span class="stat-label">Comentarios Eliminados</span>
+        </div>
+    </div>
+</div>
+
+</div>
+
                 
                 <div class="dashboard-card">
                     <h3>Acciones Rápidas</h3>
@@ -78,5 +159,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'moderador')
         </main>
     </div>
     <?php include('../components/theme-toggle.php'); ?>
+    <script src="../../assets/js/dashboard.js"></script>
 </body>
 </html> 

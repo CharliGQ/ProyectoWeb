@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                 <li><a href="#subir-video">Subir Video</a></li>
                 <li><a href="#productos">Mis Productos</a></li>
                 <li><a href="#agregar-producto">Agregar Producto</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
             </ul>
         </nav>
 

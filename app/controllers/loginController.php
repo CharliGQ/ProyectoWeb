@@ -1,6 +1,6 @@
 <?php
-require_once(__DIR__ . '/../config/database.php');
-require_once(__DIR__ . '/../models/signupModel.php');
+require_once(__DIR__ . '../../config/database.php');
+require_once(__DIR__ . '../../models/signupModel.php');
 require_once(__DIR__ . '/signupController.php');
 
 class LoginController {
@@ -11,56 +11,83 @@ class LoginController {
     }
 
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $correo = $_POST['email'];
-            $contrasenia = $_POST['password'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        session_start();
+        
+        $correo = trim($_POST['email']);
+        $contrasenia = trim($_POST['password']);
 
-            $usuario = $this->crud->verificarUsuarioPorCorreo($correo, $contrasenia);
+        $usuario = $this->crud->verificarUsuarioPorCorreo($correo, $contrasenia);
 
-            if ($usuario) {
-                session_start();
-                $_SESSION['usuario'] = [
-                    'id' => $usuario->getIdUsuario(),
-                    'nombre' => $usuario->getNombreUsuario(),
-                    'correo' => $usuario->getCorreo(),
-                    'rol' => $usuario->getRol()
-                ];
-                
-                // Redirigir según el rol
-                switch($usuario->getRol()) {
-                    case 'registrado':
-                        header('Location: ../views/dashboard/registrado.php');
-                        break;
-                    case 'moderador':
-                        header('Location: ../views/dashboard/moderador.php');
-                        break;
-                    case 'creador':
-                        header('Location: ../views/dashboard/creador.php');
-                        break;
-                    case 'main_owner':
-                        header('Location: ../views/dashboard/admin.php');
-                        break;
-                    default:
-                        header('Location: ../views/dashboard/login.php');
-                }
-                exit();
-            } else {
-                session_start();
-                $_SESSION['error'] = "Credenciales inválidas";
+        if ($usuario) {
+            // 🔹 Validar si el usuario está sancionado antes de iniciar sesión
+            if ($usuario->getSancionado() == 1) {
+                $_SESSION['error'] = "Tu cuenta ha sido suspendida. Contacta a un administrador.";
                 header('Location: ../views/login.php');
                 exit();
             }
+
+            // Guardar datos en la sesión si no está sancionado
+            $_SESSION['usuario'] = [
+                'id' => $usuario->getIdUsuario(),
+                'nombre' => $usuario->getNombreUsuario(),
+                'correo' => $usuario->getCorreo(),
+                'rol' => $usuario->getRol()
+            ];
+            
+            // Redirigir según el rol
+            switch ($usuario->getRol()) {
+                case 'registrado':
+                    header('Location: ../views/dashboard/registrado.php');
+                    break;
+                case 'moderador':
+                    header('Location: ../views/dashboard/moderador.php');
+                    break;
+                case 'creador':
+                    header('Location: ../views/dashboard/creador.php');
+                    break;
+                case 'main_owner':
+                    header('Location: ../views/dashboard/admin.php');
+                    break;
+                default:
+                    $_SESSION['error'] = "Rol no válido. Contacta a soporte.";
+                    header('Location: ../views/login.php');
+            }
+            exit();
+        } else {
+            $_SESSION['error'] = "Credenciales inválidas.";
+            header('Location: ../views/login.php');
+            exit();
         }
     }
+}
+
 
     public function logout() {
         session_start();
-        session_destroy();
+        session_unset();     
+        session_destroy();   
+
         header('Location: ../views/login.php');
         exit();
     }
 }
 
+// Determinar acción desde GET o POST
+$accion = $_GET['action'] ?? $_POST['action'] ?? 'login';
+
+// Iniciar controlador
 $loginController = new LoginController();
-$loginController->login();
-?> 
+
+switch ($accion) {
+    case 'login':
+        $loginController->login();
+        break;
+    case 'logout':
+        $loginController->logout();
+        break;
+    default:
+        header('Location: ../views/login.php');
+        exit();
+}
+?>

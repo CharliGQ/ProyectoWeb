@@ -169,3 +169,48 @@ document.addEventListener('DOMContentLoaded', () => {
     initFormSubirVideo();
     initFormAgregarProducto();
 });
+
+// Función para resolver reporte
+async function resolverReporte(idReporte, estado) {
+    try {
+        const res = await fetch('../../controllers/moderadorController.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id_reporte=${idReporte}&estado=${estado}`
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Reporte actualizado correctamente");
+            location.reload();
+        } else {
+            alert("Error al actualizar el reporte");
+        }
+    } catch (err) {
+        console.error("Error al procesar el reporte:", err);
+    }
+}
+
+async function sancionarUsuario(idUsuario) {
+    if (!confirm("¿Estás seguro de sancionar a este usuario?")) return;
+
+    try {
+        const res = await fetch('../../controllers/moderadorController.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id_usuario=${idUsuario}&accion=sancionar`
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Usuario sancionado correctamente");
+            location.reload();
+        } else {
+            alert("Error al sancionar usuario");
+        }
+    } catch (err) {
+        console.error("Error al sancionar usuario:", err);
+    }
+}
