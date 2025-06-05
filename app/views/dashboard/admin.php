@@ -25,10 +25,11 @@ $totalReportesActivos = $adminModel->getTotalReportesActivos();
 </head>
 <body>
     <div class="dashboard-container">
+        <!-- Sidebar de navegación -->
         <nav class="dashboard-nav">
             <div class="nav-header">
                 <h2>Panel de Administrador</h2>
-                <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']['nombre']); ?></p>
+                <p>Bienvenido, <?= htmlspecialchars($_SESSION['usuario']['nombre']) ?></p>
             </div>
             <ul class="nav-menu">
                 <li><a href="#" class="active">Inicio</a></li>
@@ -40,18 +41,31 @@ $totalReportesActivos = $adminModel->getTotalReportesActivos();
                 <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
             </ul>
         </nav>
-        
+
+        <!-- Contenido principal -->
         <main class="dashboard-main">
+            <!-- Encabezado -->
             <div class="dashboard-header">
                 <h1>Dashboard de Administrador</h1>
                 <div class="user-info">
-                    <span><?php echo htmlspecialchars($_SESSION['usuario']['correo']); ?></span>
+                    <span><?= htmlspecialchars($_SESSION['usuario']['correo']) ?></span>
                 </div>
             </div>
 
+            <!-- Mensajes de éxito o error -->
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert success"><?= $_SESSION['success'] ?></div>
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert error"><?= $_SESSION['error'] ?></div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
             <!-- Secciones principales -->
             <section class="dashboard-grid">
-                
+
                 <!-- Resumen del Sistema -->
                 <div class="dashboard-card">
                     <h3>Resumen del Sistema</h3>
@@ -128,6 +142,8 @@ $totalReportesActivos = $adminModel->getTotalReportesActivos();
             </section>
         </main>
     </div>
+
+    <!-- Componente de tema oscuro/claro -->
     <?php include('../components/theme-toggle.php'); ?>
 </body>
 </html>
