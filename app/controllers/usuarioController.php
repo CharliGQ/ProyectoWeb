@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Verificar que el usuario sea main_owner
+// Verificar rol del administrador
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner') {
     $_SESSION['error'] = "No tienes permiso para realizar esta acción.";
     header('Location: ../login.php');
@@ -10,10 +10,11 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner'
 
 require_once(__DIR__ . '/../config/database.php');
 
-// Obtener acción desde GET o POST
+// Obtener datos de la solicitud
 $accion = $_GET['action'] ?? $_POST['action'] ?? null;
 $id_usuario = isset($_GET['id']) ? intval($_GET['id']) : (isset($_POST['id_usuario']) ? intval($_POST['id_usuario']) : null);
 
+// Validar ID
 if (!$id_usuario) {
     $_SESSION['error'] = "Usuario no válido.";
     header('Location: ../views/dashboard/admin.php?seccion=usuarios');
@@ -23,18 +24,29 @@ if (!$id_usuario) {
 try {
     $db = Db::conectar();
 
+    // Obtener información del usuario seleccionado
+    $stmt = $db->prepare("SELECT * FROM usuarios WHERE id_usuario = ?");
+    $stmt->execute([$id_usuario]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$usuario) {
+        $_SESSION['error'] = "Usuario no encontrado.";
+        header('Location: ../views/dashboard/admin.php?seccion=usuarios');
+        exit();
+    }
+
+    // Obtener información del main_owner (el que está haciendo la acción)
+    $id_main_owner = $_SESSION['usuario']['id'];
+
+    // Validación: No permitir modificar al main_owner desde aquí
+    if ($usuario['id_usuario'] == $id_main_owner) {
+        $_SESSION['error'] = "No puedes modificarte a ti mismo desde esta sección.";
+        header('Location: ../views/dashboard/admin.php?seccion=usuarios');
+        exit();
+    }
+
     switch ($accion) {
         case 'sancionar':
-            // Obtener estado actual del usuario
-            $stmt = $db->prepare("SELECT sancionado FROM usuarios WHERE id_usuario = ?");
-            $stmt->execute([$id_usuario]);
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$usuario) {
-                $_SESSION['error'] = "Usuario no encontrado.";
-                break;
-            }
-
             // Alternar entre 0 y 1
             $nuevoEstado = $usuario['sancionado'] == 1 ? 0 : 1;
 
@@ -48,7 +60,7 @@ try {
             $rol = $_GET['rol'] ?? 'registrado';
 
             // Validar rol permitido
-            $rolesValidos = ['registrado', 'moderador', 'creador', 'main_owner'];
+            $rolesValidos = ['registrado', 'moderador', 'creador'];
             if (!in_array($rol, $rolesValidos)) {
                 $_SESSION['error'] = "Rol no válido.";
                 break;
@@ -76,7 +88,7 @@ try {
     $_SESSION['error'] = "Error al procesar la solicitud: " . $e->getMessage();
 }
 
-// Redirigir de vuelta a la sección de usuarios
+// Redirigir
 header('Location: ../views/dashboard/admin.php?seccion=usuarios');
 exit();
 ?>
