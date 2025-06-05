@@ -485,3 +485,18 @@
 }
 
 
+.alert {
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+}
+
+.alert.success {
+    background-color: #2ecc71;
+}
+
+.alert.error {
+    background-color: #e74c3c;
+}
