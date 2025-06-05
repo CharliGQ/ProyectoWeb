@@ -1,8 +1,8 @@
 :root {
     --bg-primary: #181818;
-    --bg-secondary: #202020;
-    --bg-tertiary: #2a2a2a;
-    --bg-quaternary: #333;
+    --bg-secondary: #000000;
+    --bg-tertiary: #000000;
+    --bg-quaternary: #232323;
     --color-text: #ffffff;
     --color-accent: #ffffff; /* Rojo vino claro */
     --color-border: #300000; /* Rojo vino */
@@ -198,7 +198,7 @@ button:hover {
 
 /* Botón de reporte */
 .btn-report {
-    background-color: #e74c3c; /* Rojo */
+    background-color: #2c0400; /* Rojo */
     border: none;
     padding: 8px 12px;
     font-size: 16px;
@@ -219,16 +219,16 @@ button:hover {
     top: 30%;
     left: 50%;
     transform: translate(-50%, -30%);
-    background-color: #242424;
+    background-color: #000000;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.751);
 }
 
 .report-modal textarea {
     width: 100%;
     padding: 10px;
     border-radius: 6px;
-    background-color: #333;
+    background-color: #290000;
     color: #fff;
 }

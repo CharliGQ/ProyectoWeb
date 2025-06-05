@@ -6,6 +6,8 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
 }
 ?>
 <!DOCTYPE html>
+<div class="return-container">
+    <a href="../dashboard/registrado.php" class="btn-return">⬅ Volver al Inicio</a>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -63,8 +65,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
         cargarVideos();
     });
 </script>
-<div class="return-container">
-    <a href="../dashboard/registrado.php" class="btn-return">⬅ Volver al Inicio</a>
 </div>
 
 </body>

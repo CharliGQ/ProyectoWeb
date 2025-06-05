@@ -1,6 +1,6 @@
 <?php
-require_once(__DIR__ . '/../config/database.php');
-require_once(__DIR__ . '/../models/signupModel.php');
+require_once(__DIR__ . '../../config/database.php');
+require_once(__DIR__ . '../../models/signupModel.php');
 require_once(__DIR__ . '/signupController.php');
 
 class LoginController {
@@ -12,13 +12,24 @@ class LoginController {
 
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $correo = $_POST['email'];
-            $contrasenia = $_POST['password'];
+            session_start();
+            
+            $correo = trim($_POST['email']);
+            $contrasenia = trim($_POST['password']);
 
             $usuario = $this->crud->verificarUsuarioPorCorreo($correo, $contrasenia);
 
             if ($usuario) {
-                session_start();
+                // Verificar si el usuario está sancionado
+                if ($usuario && $usuario->getSancionado() == 1) {
+    session_start();
+    $_SESSION['error'] = "Tu cuenta ha sido suspendida. Contacta a un administrador.";
+    header('Location: ../views/login.php');
+    exit();
+}
+
+
+                // Guardar datos en la sesión
                 $_SESSION['usuario'] = [
                     'id' => $usuario->getIdUsuario(),
                     'nombre' => $usuario->getNombreUsuario(),
@@ -41,12 +52,12 @@ class LoginController {
                         header('Location: ../views/dashboard/admin.php');
                         break;
                     default:
+                        $_SESSION['error'] = "Rol no válido. Contacta a soporte.";
                         header('Location: ../views/login.php');
                 }
                 exit();
             } else {
-                session_start();
-                $_SESSION['error'] = "Credenciales inválidas";
+                $_SESSION['error'] = "Credenciales inválidas.";
                 header('Location: ../views/login.php');
                 exit();
             }
@@ -55,22 +66,16 @@ class LoginController {
 
     public function logout() {
         session_start();
-        session_unset();     // Elimina variables de sesión
-        session_destroy();   // Destruye la sesión
+        session_unset();     
+        session_destroy();   
 
         header('Location: ../views/login.php');
         exit();
     }
 }
 
-// Determinar acción desde GET
-if (isset($_GET['action'])) {
-    $accion = $_GET['action'];
-} elseif (isset($_POST['action'])) {
-    $accion = $_POST['action'];
-} else {
-    $accion = 'login';
-}
+// Determinar acción desde GET o POST
+$accion = $_GET['action'] ?? $_POST['action'] ?? 'login';
 
 // Iniciar controlador
 $loginController = new LoginController();

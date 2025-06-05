@@ -23,7 +23,7 @@ $stmt->bindParam(':comentario', $comentario, PDO::PARAM_STR);
 $stmt->bindParam(':id_padre', $id_padre, PDO::PARAM_INT);
 
 if ($stmt->execute()) {
-    header("Location: ../../../comentarios/video_detalle.php?id_video=$id_video");
+    header("Location: ../views/comentarios/video_detalle.php?id_video=$id_video");
 } else {
     die(json_encode(['success' => false, 'message' => 'Error al guardar la respuesta']));
 }
