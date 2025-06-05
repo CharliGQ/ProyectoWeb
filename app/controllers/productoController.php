@@ -133,7 +133,7 @@ if (isset($_GET['action'])) {
         case 'listar':
             echo json_encode(['success' => true, 'productos' => $productoController->listarProductos()]);
             break;
-        case 'listarPorCreador':
+        case 'listar-creador':
             if (isset($_SESSION['usuario'])) {
                 echo json_encode(['success' => true, 'productos' => $productoController->listarProductosPorCreador($_SESSION['usuario']['id'])]);
             } else {
@@ -175,7 +175,7 @@ if (isset($_GET['action'])) {
             $descripcion = $_POST['descripcion'] ?? '';
             $precio = floatval($_POST['precio'] ?? 0);
             $stock = intval($_POST['stock'] ?? 0);
-            $id_creador = $_SESSION['usuario']['id'];
+            $id_usuario = $_SESSION['usuario']['id'];
 
             // Validar datos
             if (empty($nombre) || empty($descripcion) || $precio <= 0 || $stock < 0) {
@@ -219,7 +219,7 @@ if (isset($_GET['action'])) {
             $producto->setPrecio($precio);
             $producto->setStock($stock);
             $producto->setImagenUrl($imagen_url);
-            $producto->setIdCreador($id_creador);
+            $producto->setIdUsuario($id_usuario);
 
             $crudProducto = new CrudProducto();
             if ($crudProducto->insertar($producto)) {

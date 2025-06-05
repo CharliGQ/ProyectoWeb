@@ -40,29 +40,13 @@ $totalLikes = $stmtLikes->fetch(PDO::FETCH_ASSOC)['total_likes'] ?: 0; // Si no 
                 <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']['nombre']); ?></p>
             </div>
             <ul class="nav-menu">
-<<<<<<< HEAD
-<<<<<<< HEAD
                 <li><a href="registrado.php" class="active">Inicio</a></li>
                 <li><a href="../perfil.php">Mi Perfil</a></li>
-                <li><a href="#">Videos</a></li>
+                <li><a href="ver_videos.php">Videos</a></li>
                 <li><a href="../productos.php">Productos</a></li>
                 <li><a href="../mis-pedidos.php">Mis Pedidos</a></li>
                 <li><a href="../../controllers/logout.php">Cerrar Sesión</a></li>
             </ul>
-=======
-=======
->>>>>>> 1f82ad15c4f3f2537beb59d4d3e72def12bc228e
-    <li><a href="#" class="active">Inicio</a></li>
-    <li><a href="#">Mi Perfil</a></li>
-    <li><a href="ver_videos.php">Ver Vídeos</a></li>
-    <li><a href="ver_tienda.php">Ver Tienda</a></li>
-    <li><a href="#">Mensajes</a></li>
-    <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
-</ul>
-<<<<<<< HEAD
->>>>>>> 1f82ad15c4f3f2537beb59d4d3e72def12bc228e
-=======
->>>>>>> 1f82ad15c4f3f2537beb59d4d3e72def12bc228e
         </nav>
         
         <main class="dashboard-main">

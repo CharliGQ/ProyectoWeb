@@ -14,6 +14,68 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
     <link rel="stylesheet" href="../../assets/css/theme-toggle.css">
+    <style>
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 1rem;
+    }
+
+    .product-card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: var(--shadow);
+    }
+
+    .product-header {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .product-header img {
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-header h4 {
+        margin: 0;
+        color: var(--text-color);
+    }
+
+    .product-details {
+        margin: 1rem 0;
+    }
+
+    .product-details p {
+        margin: 0.5rem 0;
+        color: var(--text-secondary);
+    }
+
+    .product-details strong {
+        color: var(--text-color);
+    }
+
+    .product-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+
+    .btn-delete {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-delete:hover {
+        opacity: 0.9;
+    }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -93,101 +155,39 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                 <div id="agregar-producto" class="dashboard-card">
                     <h3>Agregar Nuevo Producto</h3>
                     <form id="form-agregar-producto" enctype="multipart/form-data">
-                        <label for="nombre">Nombre del producto:</label>
-                        <input type="text" name="nombre" id="nombre" required>
+                        <label for="nombre-producto">Nombre del producto:</label>
+                        <input type="text" name="nombre" id="nombre-producto" required>
 
-                        <label for="descripcion">Descripción:</label>
-                        <textarea name="descripcion" id="descripcion" rows="4" required></textarea>
+                        <label for="descripcion-producto">Descripción:</label>
+                        <textarea name="descripcion" id="descripcion-producto" rows="4" required></textarea>
 
-                        <label for="precio">Precio:</label>
-                        <input type="number" name="precio" id="precio" step="0.01" required>
+                        <label for="precio-producto">Precio:</label>
+                        <input type="number" name="precio" id="precio-producto" step="0.01" required>
 
-                        <label for="stock">Stock:</label>
-                        <input type="number" name="stock" id="stock" value="0" min="0" required>
+                        <label for="stock-producto">Stock:</label>
+                        <input type="number" name="stock" id="stock-producto" value="0" min="0" required>
 
-                        <label for="imagen">Imagen del producto:</label>
-                        <input type="file" name="imagen" id="imagen" accept="image/*" required>
+                        <label for="imagen-producto">Imagen del producto:</label>
+                        <input type="file" name="imagen" id="imagen-producto" accept="image/*" required>
 
                         <button type="submit" class="btn-action">Agregar Producto</button>
                     </form>
                 </div>
 
-                <!-- Listado de productos -->
+                <!-- 
+                Listado de productos    
                 <div id="productos" class="dashboard-card">
                     <h3>Mis Productos</h3>
                     <div id="lista-productos" class="product-grid">
-                        <!-- Aquí se cargarán los productos dinámicamente -->
+                        <!-- Aquí se cargarán los productos dinámicamente 
                     </div>
                 </div>
+                -->
             </div>
         </main>
     </div>
 
     <?php include('../components/theme-toggle.php'); ?>
     <script src="../../assets/js/dashboard.js"></script>
-    <script>
-        // Manejo del formulario de productos
-        document.getElementById('form-agregar-producto').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            fetch('../../controllers/productoController.php?action=agregar', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Producto agregado exitosamente');
-                    this.reset();
-                    // Recargar la lista de productos
-                    cargarProductos();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al agregar el producto');
-            });
-        });
-
-        // Función para cargar los productos
-        function cargarProductos() {
-            fetch('../../controllers/productoController.php?action=listar-creador')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const contenedor = document.getElementById('lista-productos');
-                        contenedor.innerHTML = '';
-                        
-                        data.productos.forEach(producto => {
-                            contenedor.innerHTML += `
-                                <div class="product-card">
-                                    <img src="../../${producto.imagen_url}" alt="${producto.nombre}">
-                                    <h4>${producto.nombre}</h4>
-                                    <p>${producto.descripcion}</p>
-                                    <p class="price">$${producto.precio}</p>
-                                    <p class="stock">Stock: ${producto.stock}</p>
-                                    <div class="product-actions">
-                                        <button onclick="editarProducto(${producto.id})" class="btn-edit">Editar</button>
-                                        <button onclick="eliminarProducto(${producto.id})" class="btn-delete">Eliminar</button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-
-        // Cargar productos al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarProductos();
-        });
-    </script>
 </body>
 </html>

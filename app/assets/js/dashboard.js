@@ -48,35 +48,64 @@ function cargarVideos() {
 
 // Cargar productos al iniciar
 function cargarProductos() {
-    fetch('../../controllers/productoController.php?action=listar')
+    fetch('../../controllers/productoController.php?action=listar-creador')
         .then(res => res.json())
         .then(data => {
             const listaProductos = document.getElementById('lista-productos');
             let totalProductos = 0;
 
-            if (data.success && data.productos.length > 0) {
+            if (data.success && data.productos && data.productos.length > 0) {
+                listaProductos.innerHTML = ''; // Limpiar lista actual
                 data.productos.forEach(producto => {
                     const div = document.createElement('div');
-                    div.className = 'product-item';
+                    div.className = 'product-card';
 
-                   
-                     const imagenUrl = producto.imagen_url ? `../../${producto.imagen_url}` : '../uploads/imagenes/placeholder.png';
-
+                    // Asegurar que la URL de la imagen sea correcta
+                    let imagenUrl = '';
+                    if (producto.imagen_url) {
+                        if (producto.imagen_url.startsWith('uploads/')) {
+                            imagenUrl = '../../' + producto.imagen_url;
+                        } else {
+                            imagenUrl = '../../uploads/productos/' + producto.imagen_url;
+                        }
+                    } else {
+                        imagenUrl = '../../uploads/imagenes/placeholder.png';
+                    }
 
                     div.innerHTML = `
-                        <img src="${imagenUrl}" alt="${producto.nombre}" style="max-width: 100px;">
-                        <h4>${producto.nombre}</h4>
-                        <p>$${parseFloat(producto.precio).toFixed(2)}</p>
-                        <p>Stock: ${producto.stock}</p>
-                        <button onclick="eliminarProducto(${producto.id_producto})">Eliminar</button>
+                        <div class="product-header">
+                            <img src="${imagenUrl}" alt="${producto.nombre}" style="max-width: 200px; height: auto;">
+                            <h4>${producto.nombre || 'Sin nombre'}</h4>
+                        </div>
+                        <div class="product-details">
+                            <p><strong>Descripción:</strong> ${producto.descripcion || 'Sin descripción'}</p>
+                            <p><strong>Precio:</strong> $${parseFloat(producto.precio || 0).toFixed(2)}</p>
+                            <p><strong>Stock:</strong> ${producto.stock || 0} unidades</p>
+                            <p><strong>ID:</strong> ${producto.id_producto || 'N/A'}</p>
+                        </div>
+                        <div class="product-actions">
+                            <button onclick="eliminarProducto(${producto.id_producto})" class="btn-delete">Eliminar</button>
+                        </div>
                     `;
 
                     listaProductos.appendChild(div);
                     totalProductos++;
                 });
+            } else {
+                listaProductos.innerHTML = '<p>No hay productos disponibles</p>';
             }
 
-            document.getElementById('totalProductos').textContent = totalProductos;
+            const totalElement = document.getElementById('totalProductos');
+            if (totalElement) {
+                totalElement.textContent = totalProductos;
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar productos:', error);
+            const listaProductos = document.getElementById('lista-productos');
+            if (listaProductos) {
+                listaProductos.innerHTML = '<p>Error al cargar los productos</p>';
+            }
         });
 }
 
@@ -116,24 +145,55 @@ function initFormAgregarProducto() {
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Validar campos
+        const nombre = form.querySelector('#nombre-producto').value.trim();
+        const descripcion = form.querySelector('#descripcion-producto').value.trim();
+        const precio = parseFloat(form.querySelector('#precio-producto').value);
+        const stock = parseInt(form.querySelector('#stock-producto').value);
+        const imagen = form.querySelector('#imagen-producto').files[0];
+
+        if (!nombre || !descripcion || isNaN(precio) || precio <= 0 || isNaN(stock) || stock < 0 || !imagen) {
+            alert('Por favor, complete todos los campos correctamente');
+            return;
+        }
+
         const formData = new FormData(this);
+
+        // Mostrar indicador de carga
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Procesando...';
 
         fetch('../../controllers/productoController.php?action=agregar', {
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
+        .then(async res => {
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return res.json();
+            }
+            throw new Error('La respuesta no es JSON válido');
+        })
         .then(data => {
             if (data.success) {
                 alert('✅ Producto creado correctamente.');
-                location.reload();
+                form.reset();
+                cargarProductos();
             } else {
-                alert('❌ Error: ' + data.message);
+                alert('❌ Error: ' + (data.message || 'Error desconocido'));
             }
         })
         .catch(err => {
-            alert('⚠️ Hubo un error al procesar tu solicitud.');
-            console.error(err);
+            console.error('Error detallado:', err);
+            alert('⚠️ Error al procesar la solicitud: ' + err.message);
+        })
+        .finally(() => {
+            // Restaurar el botón
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
         });
     });
 }
