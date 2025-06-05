@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                 <li><a href="#subir-video">Subir Video</a></li>
                 <li><a href="#productos">Mis Productos</a></li>
                 <li><a href="#agregar-producto">Agregar Producto</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="../../controllers/logout.php">Cerrar Sesión</a></li>
             </ul>
         </nav>
 
@@ -125,5 +125,69 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
 
     <?php include('../components/theme-toggle.php'); ?>
     <script src="../../assets/js/dashboard.js"></script>
+    <script>
+        // Manejo del formulario de productos
+        document.getElementById('form-agregar-producto').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('../../controllers/productoController.php?action=agregar', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto agregado exitosamente');
+                    this.reset();
+                    // Recargar la lista de productos
+                    cargarProductos();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar el producto');
+            });
+        });
+
+        // Función para cargar los productos
+        function cargarProductos() {
+            fetch('../../controllers/productoController.php?action=listar-creador')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const contenedor = document.getElementById('lista-productos');
+                        contenedor.innerHTML = '';
+                        
+                        data.productos.forEach(producto => {
+                            contenedor.innerHTML += `
+                                <div class="product-card">
+                                    <img src="../../${producto.imagen_url}" alt="${producto.nombre}">
+                                    <h4>${producto.nombre}</h4>
+                                    <p>${producto.descripcion}</p>
+                                    <p class="price">$${producto.precio}</p>
+                                    <p class="stock">Stock: ${producto.stock}</p>
+                                    <div class="product-actions">
+                                        <button onclick="editarProducto(${producto.id})" class="btn-edit">Editar</button>
+                                        <button onclick="eliminarProducto(${producto.id})" class="btn-delete">Eliminar</button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Cargar productos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarProductos();
+        });
+    </script>
 </body>
 </html>

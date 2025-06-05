@@ -13,7 +13,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
     <title>Dashboard - Usuario Registrado</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../assets/css/theme-toggle.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -23,11 +22,12 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado'
                 <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']['nombre']); ?></p>
             </div>
             <ul class="nav-menu">
-                <li><a href="#" class="active">Inicio</a></li>
-                <li><a href="#">Mi Perfil</a></li>
-                <li><a href="#">Mis Publicaciones</a></li>
-                <li><a href="#">Mensajes</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="registrado.php" class="active">Inicio</a></li>
+                <li><a href="../perfil.php">Mi Perfil</a></li>
+                <li><a href="#">Videos</a></li>
+                <li><a href="../productos.php">Productos</a></li>
+                <li><a href="../mis-pedidos.php">Mis Pedidos</a></li>
+                <li><a href="../../controllers/logout.php">Cerrar Sesión</a></li>
             </ul>
         </nav>
         

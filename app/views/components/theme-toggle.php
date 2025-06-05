@@ -4,9 +4,9 @@ $currentTheme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'light';
 <style>
     /* Theme Toggle Button */
     .theme-toggle {
-        position: absolute;
-        bottom: 0;
-        left: 0;
+        position: fixed;
+        bottom: 1px;
+        left: 1px;
         width: 48px;
         height: 48px;
         border-radius: 50%;
@@ -18,6 +18,7 @@ $currentTheme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'light';
         justify-content: center;
         transition: all 0.3s ease;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        z-index: 9999;
     }
 
     .theme-toggle:hover {
@@ -58,6 +59,7 @@ $currentTheme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'light';
     @media (max-width: 768px) {
         .theme-toggle {
             bottom: 1rem;
+            left: 1rem;
             width: 40px;
             height: 40px;
         }

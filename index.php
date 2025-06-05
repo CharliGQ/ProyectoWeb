@@ -17,8 +17,8 @@ $currentTheme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'light';
         </div>
         <ul class="sidebar-menu">
             <li><a href="./index.php" class="active">Inicio</a></li>
-            <li><a href="#videos">Videos</a></li>
-            <li><a href="#productos">Productos</a></li>
+            <li><a href="app/views/productos.php">Productos</a></li>
+            <li><a href="app/views/videos.php">Videos</a></li>
             <li><a href="#redes">Redes</a></li>
             <li><a href="#donaciones">Donaciones</a></li>
             <li><a href="#biografia">Biografía</a></li>
