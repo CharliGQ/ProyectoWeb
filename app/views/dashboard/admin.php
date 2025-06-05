@@ -4,7 +4,16 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner'
     header('Location: ../login.php');
     exit();
 }
+
+// Cargar datos del sistema
+require_once '../../models/adminModel.php';
+$adminModel = new AdminModel();
+
+$totalUsuarios = $adminModel->getTotalUsuarios();
+$totalModeradores = $adminModel->getTotalModeradores();
+$totalReportesActivos = $adminModel->getTotalReportesActivos();
 ?>
+
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -39,43 +48,65 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner'
                     <span><?php echo htmlspecialchars($_SESSION['usuario']['correo']); ?></span>
                 </div>
             </div>
-            
-            <div class="dashboard-content">
+
+            <!-- Secciones principales -->
+            <section class="dashboard-grid">
+                
+                <!-- Resumen del Sistema -->
                 <div class="dashboard-card">
                     <h3>Resumen del Sistema</h3>
                     <div class="system-stats">
                         <div class="stat-item">
-                            <span class="stat-value">0</span>
+                            <span class="stat-value"><?= $totalUsuarios ?></span>
                             <span class="stat-label">Usuarios Totales</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-value">0</span>
+                            <span class="stat-value"><?= $totalModeradores ?></span>
                             <span class="stat-label">Moderadores</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-value">0</span>
+                            <span class="stat-value"><?= $totalReportesActivos ?></span>
                             <span class="stat-label">Reportes Activos</span>
                         </div>
                     </div>
                 </div>
-                
-                <div class="dashboard-card">
+
+                <!-- Acciones de administración -->
+                <div class="dashboard-card card-actions">
                     <h3>Acciones de Administración</h3>
                     <div class="admin-actions">
-                        <button class="btn-action">Gestionar Usuarios</button>
-                        <button class="btn-action">Asignar Moderadores</button>
-                        <button class="btn-action">Configuración del Sistema</button>
-                        <button class="btn-action">Realizar Backup</button>
+                        <a href="?seccion=usuarios" class="btn-action">Gestionar Usuarios</a>
+                        <a href="?seccion=moderadores" class="btn-action">Asignar Moderadores</a>
+                        <a href="?seccion=configuracion" class="btn-action">Configuración del Sistema</a>
+                        <a href="?seccion=backup" class="btn-action">Realizar Backup</a>
                     </div>
                 </div>
-                
-                <div class="dashboard-card">
-                    <h3>Logs del Sistema</h3>
-                    <div class="system-logs">
-                        <p>No hay logs recientes</p>
+
+                <!-- Contenido dinámico -->
+                <?php if (isset($_GET['seccion'])): ?>
+                    <div class="dashboard-card dynamic-content">
+                        <?php 
+                            switch ($_GET['seccion']) {
+                                case 'usuarios':
+                                    include '../admin/usuarios.php';
+                                    break;
+                                case 'moderadores':
+                                    include '../admin/moderadores.php';
+                                    break;
+                                case 'configuracion':
+                                    include '../admin/configuracion.php';
+                                    break;
+                                case 'backup':
+                                    include '../admin/backup.php';
+                                    break;
+                                default:
+                                    echo "<p>Sección no encontrada.</p>";
+                            }
+                        ?>
                     </div>
-                </div>
-                
+                <?php endif; ?>
+
+                <!-- Estado del sistema -->
                 <div class="dashboard-card">
                     <h3>Estado del Sistema</h3>
                     <div class="system-status">
@@ -93,9 +124,10 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'main_owner'
                         </div>
                     </div>
                 </div>
-            </div>
+
+            </section>
         </main>
     </div>
     <?php include('../components/theme-toggle.php'); ?>
 </body>
-</html> 
+</html>
