@@ -89,24 +89,29 @@ class CrudUsuario {
         return null;
     }
 
-    // Login por correo
+// Login por correo
     public function verificarUsuarioPorCorreo($correo, $contrasenia) {
-        $db = Db::conectar();
-        $select = $db->prepare('SELECT * FROM usuarios WHERE correo=:correo');
-        $select->bindValue('correo', $correo);
-        $select->execute();
-        $usuario = $select->fetch();
-        
-        if ($usuario && password_verify($contrasenia, $usuario['contrasenia'])) {
-            $myUsuario = new Usuario();
-            $myUsuario->setIdUsuario($usuario['id_usuario']);
-            $myUsuario->setNombreUsuario($usuario['nombre_usuario']);
-            $myUsuario->setCorreo($usuario['correo']);
-            $myUsuario->setFechaRegistro($usuario['fecha_registro']);
-            $myUsuario->setRol($usuario['rol']);
-            return $myUsuario;
-        }
-        return null;
+    $db = Db::conectar();
+    $select = $db->prepare('SELECT * FROM usuarios WHERE correo=:correo');
+    $select->bindValue('correo', $correo);
+    $select->execute();
+    $usuario = $select->fetch();
+    
+    if ($usuario && password_verify($contrasenia, $usuario['contrasenia'])) {
+
+        $myUsuario = new Usuario();
+        $myUsuario->setIdUsuario($usuario['id_usuario']);
+        $myUsuario->setNombreUsuario($usuario['nombre_usuario']);
+        $myUsuario->setCorreo($usuario['correo']);
+        $myUsuario->setFechaRegistro($usuario['fecha_registro']);
+        $myUsuario->setRol($usuario['rol']);
+        $myUsuario->setSancionado($usuario['sancionado']); 
+
+        // Devuelve el usuario aunque esté sancionado
+        return $myUsuario;
     }
+    return null;
 }
+}
+
 ?> 

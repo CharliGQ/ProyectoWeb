@@ -20,7 +20,7 @@ class LoginController {
         $usuario = $this->crud->verificarUsuarioPorCorreo($correo, $contrasenia);
 
         if ($usuario) {
-            // 🔹 Validar si el usuario está sancionado antes de iniciar sesión
+            
             if ($usuario->getSancionado() == 1) {
                 $_SESSION['error'] = "Tu cuenta ha sido suspendida. Contacta a un administrador.";
                 header('Location: ../views/login.php');
