@@ -6,9 +6,11 @@ class Usuario {
     private $contrasenia;
     private $fecha_registro;
     private $rol;
+    private $sancionado; 
 
     public function __construct() {}
 
+    // Getters y Setters
     public function getIdUsuario() {
         return $this->id_usuario;
     }
@@ -56,5 +58,13 @@ class Usuario {
     public function setRol($rol) {
         $this->rol = $rol;
     }
+
+    public function getSancionado() { 
+        return $this->sancionado;
+    }
+
+    public function setSancionado($sancionado) { 
+        $this->sancionado = $sancionado;
+    }
 }
-?> 
+?>
