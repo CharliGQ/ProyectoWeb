@@ -11,6 +11,25 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
 
 require_once '../models/videoModel.php';
 
+/*Función para obtener un video por ID*/
+function obtenerVideoPorId($id_video) {
+    $db = Db::conectar();
+    $stmt = $db->prepare("SELECT * FROM videos WHERE id_video = :id");
+    $stmt->bindValue(':id', $id_video, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+/* Función para actualizar título y descripción del video*/
+function actualizarVideo($id_video, $titulo, $descripcion) {
+    $db = Db::conectar();
+    $stmt = $db->prepare("UPDATE videos SET titulo = :titulo, descripcion = :descripcion WHERE id_video = :id");
+    $stmt->bindValue(':titulo', $titulo);
+    $stmt->bindValue(':descripcion', $descripcion);
+    $stmt->bindValue(':id', $id_video, PDO::PARAM_INT);
+    return $stmt->execute();
+}
+
 // Obtener acción desde POST o GET
 $accion = $_GET['action'] ?? ($_POST['action'] ?? '');
 
@@ -80,8 +99,46 @@ switch ($accion) {
         echo json_encode(['success' => true, 'message' => 'Lista de videos cargada.', 'videos' => $videos]);
         break;
 
+        case 'obtener':
+        if (isset($_GET['id'])) {
+            $id_video = intval($_GET['id']);
+            $video = obtenerVideoPorId($id_video);
+            if ($video && $video['id_usuario'] == $_SESSION['usuario']['id']) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'video' => $video]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Video no encontrado o sin permisos.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ID de video no proporcionado.']);
+        }
+        break;
+
+    case 'actualizar_video':
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id_video = intval($_POST['id_video'] ?? 0);
+        $titulo = trim($_POST['titulo'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+
+        if (!$id_video || !$titulo) {
+            echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+            exit();
+        }
+
+        if (actualizarVideo($id_video, $titulo, $descripcion)) {
+            echo json_encode(['success' => true, 'message' => '✅ Video actualizado correctamente.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => '❌ Error al actualizar el video.']);
+        }
+    }
+    break;
+
+
     default:
         echo json_encode(['success' => false, 'message' => 'Acción no reconocida.']);
         break;
+
+        
 }
+
 ?>
