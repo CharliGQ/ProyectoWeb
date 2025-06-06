@@ -25,8 +25,13 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
     .product-card {
         background: var(--card-bg);
         border-radius: 8px;
-        padding: 1rem;
+        padding: 1.5rem;
         box-shadow: var(--shadow);
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
     }
 
     .product-header {
@@ -35,13 +40,17 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
     }
 
     .product-header img {
-        border-radius: 4px;
+        border-radius: 8px;
         margin-bottom: 0.5rem;
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
     }
 
     .product-header h4 {
         margin: 0;
         color: var(--text-color);
+        font-size: 1.2rem;
     }
 
     .product-details {
@@ -51,6 +60,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
     .product-details p {
         margin: 0.5rem 0;
         color: var(--text-secondary);
+        font-size: 0.9rem;
     }
 
     .product-details strong {
@@ -61,6 +71,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
         display: flex;
         justify-content: flex-end;
         margin-top: 1rem;
+        gap: 0.5rem;
     }
 
     .btn-delete {
@@ -70,6 +81,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
         padding: 0.5rem 1rem;
         border-radius: 4px;
         cursor: pointer;
+        transition: opacity 0.2s ease;
     }
 
     .btn-delete:hover {
@@ -174,15 +186,13 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                     </form>
                 </div>
 
-                <!-- 
-                Listado de productos    
+                <!-- Listado de productos -->
                 <div id="productos" class="dashboard-card">
                     <h3>Mis Productos</h3>
                     <div id="lista-productos" class="product-grid">
-                        <!-- Aquí se cargarán los productos dinámicamente 
+                        <!-- Aquí se cargarán los productos dinámicamente -->
                     </div>
                 </div>
-                -->
             </div>
         </main>
     </div>

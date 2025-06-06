@@ -68,15 +68,7 @@ $totalEliminados = $stmtEliminados->fetch(PDO::FETCH_ASSOC)['total_eliminados'];
                 <li><a href="#">Reportes</a></li>
                 <li><a href="#">Usuarios</a></li>
                 <li><a href="#">Configuración</a></li>
-<<<<<<< HEAD
-<<<<<<< HEAD
                 <li><a href="../../controllers/logout.php">Cerrar Sesión</a></li>
-=======
-                <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
->>>>>>> 1f82ad15c4f3f2537beb59d4d3e72def12bc228e
-=======
-                <li><a href="../../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
->>>>>>> 1f82ad15c4f3f2537beb59d4d3e72def12bc228e
             </ul>
         </nav>
         

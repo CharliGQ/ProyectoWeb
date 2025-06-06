@@ -48,7 +48,7 @@ function cargarVideos() {
 
 // Cargar productos al iniciar
 function cargarProductos() {
-    fetch('../../controllers/productoController.php?action=listar-creador')
+    fetch('../../controllers/producto_creador_Controller.php?action=listar')
         .then(res => res.json())
         .then(data => {
             const listaProductos = document.getElementById('lista-productos');
