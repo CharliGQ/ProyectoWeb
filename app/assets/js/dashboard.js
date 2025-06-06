@@ -35,13 +35,9 @@ function cargarVideos() {
                         <p>${video.descripcion}</p>
                         ${playerHTML}
                         <br>
-<<<<<<< HEAD
                         <button onclick="eliminarVideo(${video.id_video})" class="btn-delete-video">Eliminar</button>
-=======
-                        <button onclick="obtenerVideo(${video.id_video})">Editar</button>
-                        <button onclick="eliminarVideo(${video.id_video})">Eliminar</button>
+                        <button onclick="obtenerVideo(${video.id_video})" class="btn-delete-video">Editar</button>
                         <div id="edit-form-${video.id_video}" class="edit-form"></div>
->>>>>>> beec1ed3a38dd43dbae66a7f746dfd21308f8d08
                     `;
                     lista.appendChild(div);
                     total++;
