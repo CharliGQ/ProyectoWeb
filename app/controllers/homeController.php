@@ -24,7 +24,7 @@ class HomeController {
 
     public function getUltimosProductos() {
         try {
-            $stmt = $this->conn->prepare("SELECT id_producto, nombre, descripcion, imagen_url, precio FROM productos WHERE stock > 0 ORDER BY fecha_creacion DESC LIMIT 6");
+            $stmt = $this->conn->prepare("SELECT * FROM productos WHERE stock > 0 ORDER BY fecha_creacion DESC LIMIT 6");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

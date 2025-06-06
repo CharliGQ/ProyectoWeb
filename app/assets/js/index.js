@@ -62,13 +62,15 @@ async function cargarProductosRecientes() {
                 imagenUrl = imagenUrl.replace('../', ''); // Elimina ../ si viene desde BD
 
                 contenedor.insertAdjacentHTML('beforeend', `
-                        <div class="producto-card">
+                    <div class="producto-card">
+                        <div class="producto-imagen">
                             <img src="/ProyectoWeb/${imagenUrl}" alt="${producto.nombre}">
-                            <h3>${producto.nombre}</h3>
-                            <p>$${parseFloat(producto.precio).toFixed(2)}</p>
-                            <button class="btn-comprar">Comprar</button>
                         </div>
-                    `);
+                        <h3>${producto.nombre}</h3>
+                        <p>$${parseFloat(producto.precio).toFixed(2)}</p>
+                        <button class="btn-comprar">Comprar</button>
+                    </div>
+                `);
             });
         } else {
             contenedor.innerHTML = '<p class="empty-message">No hay productos disponibles aún.</p>';

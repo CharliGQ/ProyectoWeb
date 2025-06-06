@@ -15,78 +15,266 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
     <link rel="stylesheet" href="../../assets/css/dashboard.css">
     <link rel="stylesheet" href="../../assets/css/theme-toggle.css">
     <style>
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 2rem;
-        padding: 1rem;
-    }
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 1rem;
+        }
 
-    .product-card {
-        background: var(--card-bg);
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: var(--shadow);
-        transition: transform 0.2s ease-in-out;
-    }
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    .product-card:hover {
-        transform: translateY(-5px);
-    }
+        .dashboard-card h3 {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
 
-    .product-header {
-        text-align: center;
-        margin-bottom: 1rem;
-    }
+        /* Estilos para el resumen */
+        .system-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
 
-    .product-header img {
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .product-header h4 {
-        margin: 0;
-        color: var(--text-color);
-        font-size: 1.2rem;
-    }
+        .stat-value {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+        }
 
-    .product-details {
-        margin: 1rem 0;
-    }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    .product-details p {
-        margin: 0.5rem 0;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-    }
+        /* Estilos para el formulario */
+        .dashboard-card form {
+            display: grid;
+            gap: 1.8rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .product-details strong {
-        color: var(--text-color);
-    }
+        .dashboard-card label {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            display: block;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
 
-    .product-actions {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 1rem;
-        gap: 0.5rem;
-    }
+        .dashboard-card input[type="text"],
+        .dashboard-card input[type="number"],
+        .dashboard-card textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
 
-    .btn-delete {
-        background-color: var(--danger-color);
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: opacity 0.2s ease;
-    }
+        [data-theme="dark"] .dashboard-card input[type="text"],
+        [data-theme="dark"] .dashboard-card input[type="number"],
+        [data-theme="dark"] .dashboard-card textarea {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-    .btn-delete:hover {
-        opacity: 0.9;
-    }
+        .dashboard-card input[type="text"]:focus,
+        .dashboard-card input[type="number"]:focus,
+        .dashboard-card textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        [data-theme="dark"] .dashboard-card input[type="text"]:focus,
+        [data-theme="dark"] .dashboard-card input[type="number"]:focus,
+        [data-theme="dark"] .dashboard-card textarea:focus {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .dashboard-card textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .dashboard-card input[type="file"] {
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px dashed rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        [data-theme="dark"] .dashboard-card input[type="file"] {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dashboard-card input[type="file"]:hover {
+            border-color: var(--primary-color);
+        }
+
+        .dashboard-card button[type="submit"] {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+
+        /* Estilos para la lista de productos */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .product-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-header img {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-header h4 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .product-details {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .product-details p {
+            margin: 1rem 0;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .product-details strong {
+            color: var(--text-color);
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .product-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-edit, .btn-delete, .btn-delete-video {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-edit {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-delete, .btn-delete-video {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* Ajustes para el texto dentro de los inputs */
+        .dashboard-card input[type="text"]::placeholder,
+        .dashboard-card input[type="number"]::placeholder,
+        .dashboard-card textarea::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        [data-theme="dark"] .dashboard-card input[type="text"]::placeholder,
+        [data-theme="dark"] .dashboard-card input[type="number"]::placeholder,
+        [data-theme="dark"] .dashboard-card textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Ajustes para el color del texto en los inputs */
+        .dashboard-card input[type="text"],
+        .dashboard-card input[type="number"],
+        .dashboard-card textarea {
+            color: #333;
+        }
+
+        [data-theme="dark"] .dashboard-card input[type="text"],
+        [data-theme="dark"] .dashboard-card input[type="number"],
+        [data-theme="dark"] .dashboard-card textarea {
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -102,7 +290,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                 <li><a href="#subir-video">Subir Video</a></li>
                 <li><a href="#productos">Mis Productos</a></li>
                 <li><a href="#agregar-producto">Agregar Producto</a></li>
-                <li><a href="../controllers/loginController.php?action=logout">Cerrar Sesión</a></li>
+                <li><a href="../../controllers/logout.php">Cerrar Sesión</a></li>
             </ul>
         </nav>
 
