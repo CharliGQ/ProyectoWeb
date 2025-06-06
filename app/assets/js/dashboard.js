@@ -35,7 +35,9 @@ function cargarVideos() {
                         <p>${video.descripcion}</p>
                         ${playerHTML}
                         <br>
+                        <button onclick="obtenerVideo(${video.id_video})">Editar</button>
                         <button onclick="eliminarVideo(${video.id_video})">Eliminar</button>
+                        <div id="edit-form-${video.id_video}" class="edit-form"></div>
                     `;
                     lista.appendChild(div);
                     total++;
@@ -273,4 +275,68 @@ async function sancionarUsuario(idUsuario) {
     } catch (err) {
         console.error("Error al sancionar usuario:", err);
     }
+}
+
+// Función para obtener detalles de un video y mostrar formulario de edición
+function obtenerVideo(id_video) {
+    fetch(`../../controllers/videoController.php?action=obtener&id=${id_video}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const video = data.video;
+                const container = document.getElementById('edit-form-' + id_video);
+
+                // Limpiar contenido previo y generar formulario
+                container.innerHTML = `
+                    <form onsubmit="guardarEdicion(event, ${id_video})">
+                        <label>Título:</label>
+                        <input type="text" id="edit-titulo-${id_video}" value="${video.titulo}" required>
+
+                        <label>Descripción:</label>
+                        <textarea id="edit-descripcion-${id_video}">${video.descripcion}</textarea>
+
+                        <button type="submit" class="btn-action">Guardar Cambios</button>
+                    </form>
+                `;
+            } else {
+                alert("⚠️ No se pudo cargar el video.");
+            }
+        })
+        .catch(err => {
+            console.error("Error al obtener el video:", err);
+            alert("⚠️ Error al cargar los datos del video.");
+        });
+}
+
+// Función para guardar los cambios del video
+function guardarEdicion(event, id_video) {
+    event.preventDefault(); // Evita recargar página
+
+    const titulo = document.getElementById(`edit-titulo-${id_video}`).value.trim();
+    const descripcion = document.getElementById(`edit-descripcion-${id_video}`).value.trim();
+
+    const formData = new URLSearchParams();
+    formData.append("action", "actualizar_video");
+    formData.append("id_video", id_video);
+    formData.append("titulo", titulo);
+    formData.append("descripcion", descripcion);
+
+    fetch("../../controllers/videoController.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("✅ Video actualizado correctamente.");
+            location.reload(); // Recargar para ver cambios
+        } else {
+            alert("❌ Error al actualizar el video.");
+        }
+    })
+    .catch(err => {
+        console.error("Error al guardar:", err);
+        alert("⚠️ Hubo un error al guardar los cambios.");
+    });
 }
