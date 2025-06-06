@@ -1,13 +1,36 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'registrado') {
+if (!isset($_SESSION['usuario']) || !in_array($_SESSION['usuario']['rol'], ['registrado', 'creador', 'moderador'])) {
     header('Location: login.php');
     exit();
 }
+
+require_once '../../config/database.php';
+$conn = Db::conectar();
+$id_usuario = $_SESSION['usuario']['id'];
+
+if ($_SESSION['usuario']['rol'] === 'creador') {
+    // Obtener solo los videos del creador
+    $stmt = $conn->prepare("SELECT id_video, url_video FROM videos WHERE id_usuario = :id_usuario");
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+} else {
+    // Obtener solo los videos públicos
+    $stmt = $conn->prepare("SELECT id_video, url_video FROM videos WHERE visibilidad = 'publico'");
+}
+$stmt->execute();
+$videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <div class="return-container">
-    <a href="../dashboard/registrado.php" class="btn-return">⬅ Volver al Inicio</a>
+    <?php if ($_SESSION['usuario']['rol'] === 'creador'): ?>
+        <a href="../dashboard/creador.php" class="btn-return">⬅ Volver al Panel de Creador</a>
+    <?php elseif ($_SESSION['usuario']['rol'] === 'moderador'): ?>
+        <a href="../dashboard/moderador.php" class="btn-return">⬅ Volver al Panel de Moderador</a>
+    <?php else: ?>
+        <a href="../dashboard/registrado.php" class="btn-return">⬅ Volver al Inicio</a>
+    <?php endif; ?>
+</div>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">

@@ -155,8 +155,10 @@ $totalEliminados = $stmtEliminados->fetch(PDO::FETCH_ASSOC)['total_eliminados'];
                         <button class="btn-action">Moderar Contenido</button>
                     </div>
                 </div>
+            <div class="dashboard-card">
+                <h3>Opciones adicionales</h3>
+                <a href="ver_videos.php" class="btn-action">🎥 Ver Videos y Comentarios</a>
             </div>
-        </main>
     </div>
     <?php include('../components/theme-toggle.php'); ?>
     <script src="../../assets/js/dashboard.js"></script>
