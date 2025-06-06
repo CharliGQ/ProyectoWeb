@@ -33,5 +33,24 @@ function listarVideosPorCreador($id_usuario) {
         error_log("Error al listar vídeos: " . $e->getMessage());
         return [];
     }
+
+    // Obtener video por ID
+function obtenerVideoPorId($id_video) {
+    $db = Db::conectar();
+    $stmt = $db->prepare("SELECT * FROM videos WHERE id_video = :id");
+    $stmt->bindValue(':id', $id_video, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// Actualizar título y descripción del video
+function actualizarVideo($id_video, $titulo, $descripcion) {
+    $db = Db::conectar();
+    $stmt = $db->prepare("UPDATE videos SET titulo = :titulo, descripcion = :descripcion WHERE id_video = :id");
+    $stmt->bindValue(':titulo', $titulo);
+    $stmt->bindValue(':descripcion', $descripcion);
+    $stmt->bindValue(':id', $id_video, PDO::PARAM_INT);
+    return $stmt->execute();
+}
 }
 ?>
