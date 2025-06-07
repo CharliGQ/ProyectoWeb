@@ -275,6 +275,85 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
         [data-theme="dark"] .dashboard-card textarea {
             color: #fff;
         }
+
+        /* Estilos para la sección de pedidos */
+        .pedidos-container {
+            margin-top: 1.5rem;
+        }
+
+        .pedidos-filtros {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filtro-select, .filtro-fecha {
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .pedidos-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pedidos-tabla th,
+        .pedidos-tabla td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pedidos-tabla th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .pedidos-tabla tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .estado-pedido {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .estado-pendiente { background: #ffd700; color: #000; }
+        .estado-enviado { background: #1e90ff; color: #fff; }
+        .estado-entregado { background: #32cd32; color: #fff; }
+        .estado-cancelado { background: #ff4444; color: #fff; }
+
+        .btn-accion-pedido {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        .btn-ver-detalles {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-actualizar-estado {
+            background: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -290,6 +369,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                 <li><a href="#subir-video">Subir Video</a></li>
                 <li><a href="#productos">Mis Productos</a></li>
                 <li><a href="#agregar-producto">Agregar Producto</a></li>
+                <li><a href="#pedidos">Pedidos</a></li>
                 <li><a href="../../controllers/logout.php">Cerrar Sesión</a></li>
             </ul>
         </nav>
@@ -379,6 +459,53 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                     <h3>Mis Productos</h3>
                     <div id="lista-productos" class="product-grid">
                         <!-- Aquí se cargarán los productos dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Sección de Pedidos -->
+                <div id="pedidos" class="dashboard-card">
+                    <h3>Pedidos Recibidos</h3>
+                    <div class="pedidos-container">
+                        <div class="pedidos-lista">
+                            <table class="pedidos-tabla">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pedido</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Productos</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-pedidos">
+                                    <?php
+                                    require_once(__DIR__ . '/../../controllers/ventaController.php');
+                                    $controller = new VentaController();
+                                    $ventas = $controller->obtenerVentas();
+                                    
+                                    foreach ($ventas as $venta) {
+                                        echo '<tr>';
+                                        echo '<td>' . $venta->getIdVenta() . '</td>';
+                                        echo '<td>' . date('d/m/Y H:i', strtotime($venta->getFechaVenta())) . '</td>';
+                                        echo '<td>' . $venta->getNombreUsuario() . '<br><small>' . $venta->getCorreo() . '</small></td>';
+                                        echo '<td>' . $venta->getNombreProducto() . '<br><small>Cantidad: ' . $venta->getCantidad() . '</small></td>';
+                                        echo '<td>$' . number_format($venta->getTotal(), 2) . '</td>';
+                                        echo '<td><span class="status-badge ' . $venta->getStatus() . '">' . $venta->getStatus() . '</span></td>';
+                                        echo '<td>
+                                            <button class="btn-accion" onclick="verDetalles(' . $venta->getIdVenta() . ')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn-accion" onclick="actualizarEstado(' . $venta->getIdVenta() . ')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>';
+                                        echo '</tr>';
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
