@@ -381,7 +381,13 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                         <!-- Aquí se cargarán los productos dinámicamente -->
                     </div>
                 </div>
-            </div>
+
+                <!-- Opciones adicionales -->
+                <div class="dashboard-card">
+                    <h3>Opciones adicionales</h3>
+                    <a href="ver_videos.php" class="btn-action">🎥 Ver mis vídeos y comentarios</a>
+                </div>
+
         </main>
     </div>
 
