@@ -462,6 +462,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 <!-- Sección de Pedidos -->
                 <div id="pedidos" class="dashboard-card">
                     <h3>Pedidos Recibidos</h3>
@@ -509,6 +510,14 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'creador') {
                     </div>
                 </div>
             </div>
+=======
+                <!-- Opciones adicionales -->
+                <div class="dashboard-card">
+                    <h3>Opciones adicionales</h3>
+                    <a href="ver_videos.php" class="btn-action">🎥 Ver mis vídeos y comentarios</a>
+                </div>
+
+>>>>>>> 9ab9cdd14bc28a94242ee1aa5081eff4be733f2f
         </main>
     </div>
 
